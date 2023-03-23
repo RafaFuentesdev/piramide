@@ -12,6 +12,7 @@
  */
 class Nodo {
 public:
+    // Variables miembro que almacenan información relevante del nodo
     int id, nivel, fila, columna;
     Nodo* padre;
     int homog;
@@ -24,60 +25,27 @@ public:
     double umbral_humedo;
     double umbral_intermedio;
     double umbral_seco;
-    
-    /**
-     * @brief Constructor por defecto para la clase Nodo.
-     * 
-     * @param id Identificador del Nodo (por defecto es -1).
-     */
+
+    // Constructor de la clase Nodo
     Nodo(int id = -1);
 
-    /**
-     * @brief Verifica si el Nodo es homogéneo.
-     * 
-     * @return Verdadero si el Nodo es homogéneo, falso en caso contrario.
-     */
+    // Método para verificar si el nodo es homogéneo
     bool esHomogeneo();
 
-    /**
-     * @brief Establece el Nodo padre del Nodo actual.
-     * 
-     * @param nodo_padre Referencia al Nodo padre.
-     */
+    // Métodos para establecer y obtener el nodo padre
     void setPadre(Nodo& nodo_padre);
-
-    /**
-     * @brief Obtiene el Nodo padre del Nodo actual.
-     * 
-     * @return Referencia al Nodo padre.
-     */
     Nodo& getPadre();
 
-    /**
-     * @brief Elimina la referencia al Nodo padre.
-     */
+    // Método para liberar al nodo de su padre
     void parricida();
 
-    /**
-     * @brief Verifica si el Nodo es huérfano (no tiene Nodo padre).
-     * 
-     * @return Verdadero si el Nodo es huérfano, falso en caso contrario.
-     */
+    // Método para verificar si el nodo no tiene padre (es huérfano)
     bool esHuerfano();
 
-    /**
-     * @brief Verifica si el Nodo es enlazable.
-     * 
-     * @return Verdadero si el Nodo es enlazable, falso en caso contrario.
-     */
+    // Método para verificar si el nodo es enlazable
     bool esEnlazable();
 
-    /**
-     * @brief Verifica si el Nodo es fusionable según el área mínima.
-     * 
-     * @param area_min Área mínima requerida para que el Nodo sea fusionable.
-     * @return Verdadero si el Nodo es fusionable, falso en caso contrario.
-     */
+    // Método para verificar si el nodo es fusionable
     bool esFusionable(int area_min);
 };
 
