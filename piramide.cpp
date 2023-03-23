@@ -241,33 +241,48 @@ void Piramide::purga() {
 }
 
 
-void Piramide::enlaza() {    	    
+/**
+ * @brief Enlaza nodos en la pirámide según criterios específicos.
+ * 
+ * Esta función enlaza nodos en la pirámide siguiendo criterios específicos y de acuerdo con la función enlazarConMejorCandidato.
+ * Recorre la pirámide desde el nivel más alto hasta el más bajo en busca de nodos enlazables.
+ * Si se encuentra un nodo enlazable, se intenta enlazar con el mejor candidato.
+ * Este proceso se repite hasta que no haya cambios.
+ * 
+ */
+void Piramide::enlaza() {
     int nivel, fila, col;
     int tam_niv;
-    bool hayCambios= false;
+    bool hayCambios = false;
     Nodo nodo_enlazable;
-    
+
     std::cout << "Enlazando nodos......................";
-    
+
     do {
+        hayCambios = false;
+
+        // Recorrer la pirámide desde el nivel más alto hasta el más bajo
         for (int n = num_niv - 1; n >= 0; n--) {
             int tam_fila, tam_columna;
             std::tie(tam_fila, tam_columna) = getTam(n);
+
+            // Recorrer filas y columnas del nivel actual
             for (int i = 0; i < tam_fila; i++) {
                 for (int j = 0; j < tam_columna; j++) {
                     Nodo& Nodoi = piramide[n][i][j];
-                    if ((Nodoi.area != -1)) {
+
+                    // Si el nodo tiene área, verificar si es enlazable
+                    if (Nodoi.area != -1) {
                         if (nodo_enlazable.esEnlazable()) {
-                            hayCambios=enlazarConMejorCandidato(nodo_enlazable);
+                            // Intentar enlazar con el mejor candidato y actualizar hayCambios
+                            hayCambios = enlazarConMejorCandidato(nodo_enlazable);
                         }
                     }
                 }
             }
         }
     } while (hayCambios);
-    
-    // showPiramid("Enlaza");
-} // fin enlaza.........................
+}
 
 void Piramide::clasifica() {
         int nivel, fila, col;
@@ -289,9 +304,8 @@ void Piramide::clasifica() {
                             if (Nodoi.esFusionable(area_min_paic)) {                                
                             	//esFusionado=fusionarConPrimerCandidato(nodo);
                             	esFusionado=fusionarConMejorCandidato(Nodoi);
-                            }//if es fusionable
+                            }
 
-                            //No ha llegado a fusionarse. ¿Puede generar clase?
                             if ((!esFusionado) && Nodoi.area != -1) {
                             	//excluirDeClase(nodo);
                                 crearClase(Nodoi);
@@ -309,18 +323,17 @@ void Piramide::clasifica() {
                                 }			  			  		                
                                 //...........................................
                                  */
-                            } //no es fusionado y no es obstaculo                           
-                        } else {
-                            // Toma la clase del padre  
+                            }                         
+                        } else {  
                         	//excluirDeClase(nodo);
                             incluirEnClase(Nodoi, Nodoi.getPadre());
-                        } //nodo con padre
-                    } // nodo existe
-                } // for (col=0; col<tam_niv; col++) 
-            } // for (fila=0; fila<tam_niv; fila++)
+                        }
+                    }
+                }
+            }
         }        
         std::cout << "Clasificación............." << std::endl;
-    } // fin clasifica
+    }
 
 std::tuple<int, int, int> Piramide::get_nivel_fila_columna(int id) {
     int nivel = 0;
