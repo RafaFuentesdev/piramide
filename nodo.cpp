@@ -1,74 +1,77 @@
 #include "nodo.h"
 
-// Constructor por defecto
-Nodo::Nodo(int id) : id(id) {
-    capacidad_campo_media = -1;
-    estaciones = -1;
-    pendiente_3clases = -1;
-    porosidad_media = -1;
-    punto_marchitez_medio = -1;
-    umbral_humedo = -1;
-    umbral_intermedio = -1;
-    umbral_seco = -1;
-    homog = -1;
-    area = -1;
-    padre = nullptr;
-}
+/**
+ * @brief Constructor por defecto para la clase Nodo.
+ * 
+ * @param id Identificador del Nodo (por defecto es -1).
+ */
+Nodo::Nodo(int id = -1)
+    : id{id}, capacidad_campo_media{-1}, estaciones{-1}, pendiente_3clases{-1},
+      porosidad_media{-1}, punto_marchitez_medio{-1}, umbral_humedo{-1},
+      umbral_intermedio{-1}, umbral_seco{-1}, homog{-1}, area{-1}, padre{nullptr} {}
 
-// Constructor con parámetros
-Nodo::Nodo(int id, double capacidad_campo_media, int estaciones, double pendiente_3clases,
-         double porosidad_media, double punto_marchitez_medio, double umbral_humedo,
-         double umbral_intermedio, double umbral_seco)
-    : id(id), capacidad_campo_media(capacidad_campo_media), estaciones(estaciones),
-      pendiente_3clases(pendiente_3clases), porosidad_media(porosidad_media),
-      punto_marchitez_medio(punto_marchitez_medio), umbral_humedo(umbral_humedo),
-      umbral_intermedio(umbral_intermedio), umbral_seco(umbral_seco) {}
-
-// Constructor vacío
-Nodo::Nodo(){
-    capacidad_campo_media = -1;
-    estaciones = -1;
-    pendiente_3clases = -1;
-    porosidad_media = -1;
-    punto_marchitez_medio = -1;
-    umbral_humedo = -1;
-    umbral_intermedio = -1;
-    umbral_seco = -1;
-    homog = -1;
-    area = -1;
-    padre = nullptr;
-}
-
-// Indica si el Nodo es homogéneo
-bool Nodo::esHomogenea() {
+/**
+ * @brief Verifica si el Nodo es homogéneo.
+ * 
+ * @return Verdadero si el Nodo es homogéneo, falso en caso contrario.
+ */
+bool Nodo::esHomogeneo() {
     return homog == 1;
 }
 
+/**
+ * @brief Establece el Nodo padre del Nodo actual.
+ * 
+ * @param nodo_padre Referencia al Nodo padre.
+ */
 void Nodo::setPadre(Nodo& nodo_padre) {
     padre = &nodo_padre;
 }
 
+/**
+ * @brief Obtiene el Nodo padre del Nodo actual.
+ * 
+ * @return Referencia al Nodo padre.
+ */
+Nodo& Nodo::getPadre() {
+    return *padre;
+}
+
+/**
+ * @brief Elimina la referencia al Nodo padre.
+ */
 void Nodo::parricida(){
-    if (padre != nullptr) {
-        padre = nullptr;
-    }
+    padre = nullptr;
 }
 
-bool Nodo::esEnlazable(){
-    //falta por implementar
-    return true;
-}
-
+/**
+ * @brief Verifica si el Nodo es huérfano (no tiene Nodo padre).
+ * 
+ * @return Verdadero si el Nodo es huérfano, falso en caso contrario.
+ */
 bool Nodo::esHuerfano(){
     return padre == nullptr;    
 }
 
-bool Nodo::esFusionable(int area_min){
+/**
+ * @brief Verifica si el Nodo es enlazable.
+ * 
+ * @return Verdadero si el Nodo es enlazable, falso en caso contrario.
+ */
+bool Nodo::esEnlazable(){
+    // Falta por implementar
     return true;
 }
 
-Nodo& Nodo::getPadre() {
-    return *padre;
+/**
+ * @brief Verifica si el Nodo es fusionable según el área mínima.
+ * 
+ * @param area_min Área mínima requerida para que el Nodo sea fusionable.
+ * @return Verdadero si el Nodo es fusionable, falso en caso contrario.
+ */
+bool Nodo::esFusionable(int area_min){
+    //Falta por implementar
+    return true;
 }
 
 

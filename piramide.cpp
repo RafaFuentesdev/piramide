@@ -210,7 +210,7 @@ void Piramide::purga() {
                 Nodo& Nodoi = piramide[n][i][j];
 
                 // Si el nodo no es homogéneo, inicializarlo vacío.
-                if (!Nodoi.esHomogenea()) {
+                if (!Nodoi.esHomogeneo()) {
                     Nodoi = Nodo();
                 }
             }
