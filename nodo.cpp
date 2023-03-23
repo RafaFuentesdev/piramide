@@ -5,7 +5,7 @@
  * 
  * @param id Identificador del Nodo (por defecto es -1).
  */
-Nodo::Nodo(int id = -1)
+Nodo::Nodo(int id)
     : id{id}, capacidad_campo_media{-1}, estaciones{-1}, pendiente_3clases{-1},
       porosidad_media{-1}, punto_marchitez_medio{-1}, umbral_humedo{-1},
       umbral_intermedio{-1}, umbral_seco{-1}, homog{-1}, area{-1}, padre{nullptr} {}
