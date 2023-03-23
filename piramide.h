@@ -24,9 +24,9 @@ public:
     // Constructor de la clase
     Piramide() {
         init();
-        purga();
-        enlaza();
-        clasifica();
+        //purga();
+        //enlaza();
+        //clasifica();
     }
 
     void init();
@@ -41,8 +41,8 @@ public:
     void inicializarPiramide();
     void inicializarNivelesRestantes();
 
-    bool nodosSonIguales(Nodo& Nodo_NO, Nodo& Nodo_NE, Nodo& Nodo_SO, Nodo& Nodo_SE);
-    bool nodosSonHomogeneos(Nodo& Nodo_NO, Nodo& Nodo_NE, Nodo& Nodo_SO, Nodo& Nodo_SE);
+    bool nodosSonIguales(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE);
+    bool nodosSonHomogeneos(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE);
     bool enlazarConMejorCandidato(Nodo& nodo_enlazable);
     bool fusionarConMejorCandidato(Nodo& nodo);
     void crearClase(Nodo& nodo);
@@ -56,8 +56,6 @@ public:
     //Nodo& get_Nodo_id(int id);
 
     //int get_id(int nivel, int fila, int columna);
-
-private:
     std::vector<std::vector<std::vector<Nodo>>> piramide;
 
 };

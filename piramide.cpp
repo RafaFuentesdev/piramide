@@ -133,53 +133,58 @@ void Piramide::leerArchivoCSV() {
     std::cout << "Se han terminado de leer los datos del fichero." << std::endl;
 }
 
+/**
+ * @brief Inicializa los niveles restantes de la pirámide, estableciendo relaciones entre nodos y calculando sus atributos.
+ * 
+ * Esta función inicializa los niveles restantes de la pirámide (niveles superiores) a partir de los nodos de nivel inferior.
+ * Comprueba si los nodos de la base son iguales y homogéneos, y en caso afirmativo, establece sus atributos y relaciones.
+ * También evalúa si los nodos son parecidos y homogéneos, en cuyo caso aún falta implementar la funcionalidad correspondiente.
+ * 
+ * Base_NO  Base_NE
+ * Base_SO  Base_SE
+ */
 void Piramide::inicializarNivelesRestantes(){
-    int nodos_homogeneos = 0, nodos_no_homogeneos = 0;
-    // Inicialización del resto de niveles
-    // para los atributos de probabilidad de ocupacion, 
-    // homogeneidad ... usamos los cuatro nodos de debajo
+    // Recorrer todos los niveles restantes
     for (int n = 1; n < num_niv; n++) {
         int tam_fila, tam_columna;
+        // Obtener el tamaño del nivel actual
         std::tie(tam_fila, tam_columna) = getTam(n);
+
+        // Recorrer todas las filas y columnas del nivel actual
         for (int i = 0; i < tam_fila; i++) {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][i][j];
-                Nodo& Nodo_NO = piramide[n-1][i*2][j*2];
-                Nodo& Nodo_NE = piramide[n-1][i*2][j*2+1];
-                Nodo& Nodo_SO = piramide[n-1][i*2+1][j*2];
-                Nodo& Nodo_SE = piramide[n-1][i*2+1][j*2+1];
-                if(nodosSonIguales(Nodo_NO, Nodo_NE, Nodo_SO, Nodo_SE) && nodosSonHomogeneos(Nodo_NO, Nodo_NE, Nodo_SO, Nodo_SE)){
+                Nodo& Base_NO = piramide[n-1][i*2][j*2];
+                Nodo& Base_NE = piramide[n-1][i*2][j*2+1];
+                Nodo& Base_SO = piramide[n-1][i*2+1][j*2];
+                Nodo& Base_SE = piramide[n-1][i*2+1][j*2+1];
+                
+                if(nodosSonIguales(Base_NO, Base_NE, Base_SO, Base_SE) && nodosSonHomogeneos(Base_NO, Base_NE, Base_SO, Base_SE)){
                     Nodoi.homog = 1;
+                    Nodoi.area = Base_NO.area + Base_NE.area + Base_SO.area + Base_SE.area;
+                    Nodoi.capacidad_campo_media = Base_NO.capacidad_campo_media;
+                    Nodoi.estaciones = Base_NO.estaciones;
+                    Nodoi.pendiente_3clases = Base_NO.pendiente_3clases;
+                    Nodoi.porosidad_media = Base_NO.porosidad_media;
+                    Nodoi.umbral_humedo = Base_NO.umbral_humedo;
+                    Nodoi.umbral_intermedio = Base_NO.umbral_intermedio;
+                    Nodoi.umbral_seco = Base_NO.umbral_seco;
+                    Base_NO.setPadre(Nodoi);
+                    Base_NE.setPadre(Nodoi);
+                    Base_SO.setPadre(Nodoi);
+                    Base_SE.setPadre(Nodoi);
                 }
+                /*
+                else if (nodosSonParecidos(Base_NO, Base_NE, Base_SO, Base_SE, similitud) && nodosSonHomogeneos(Base_NO, Base_NE, Base_SO, Base_SE)){
+                    //Falta por implementar.
+                }
+                */
                 else{
                     Nodoi.homog = 0;
                 }
-                
-                Nodo_NO.setPadre(Nodoi);
-                Nodo_NE.setPadre(Nodoi);
-                Nodo_SO.setPadre(Nodoi);
-                Nodo_SE.setPadre(Nodoi);
-                /*
-                if(nodosSonIguales(Nodo_NO, Nodo_NE, Nodo_SO, Nodo_SE) && nodosSonHomogeneos(Nodo_NO, Nodo_NE, Nodo_SO, Nodo_SE)){
-                    Nodoi.homog = 1;
-                    Nodoi.area = Nodo_NO.area + Nodo_NE.area + Nodo_SO.area + Nodo_SE.area;
-                    Nodoi.capacidad_campo_media = Nodo_NO.capacidad_campo_media;
-                    Nodoi.estaciones = Nodo_NO.estaciones;
-                    Nodoi.pendiente_3clases = Nodo_NO.pendiente_3clases;
-                    Nodoi.porosidad_media = Nodo_NO.porosidad_media;
-                    Nodoi.umbral_humedo = Nodo_NO.umbral_humedo;
-                    Nodoi.umbral_intermedio = Nodo_NO.umbral_intermedio;
-                    Nodoi.umbral_seco = Nodo_NO.umbral_seco;
-                    Nodo_NO.setPadre(n, i, j);
-                    Nodo_NE.setPadre(n, i, j);
-                    Nodo_SO.setPadre(n, i, j);
-                    Nodo_SE.setPadre(n, i, j);
-                }
-                */
             }
         }
     }
-    std::cout << "Nodos homogeneos: " << nodos_homogeneos << " Nodos no homogeneos: " << nodos_no_homogeneos << std::endl;
 }
 
 void Piramide::purga(){
@@ -327,15 +332,15 @@ std::tuple<int, int> Piramide::getTam(int nivel) const {
     return std::make_tuple(tam_fila, tam_columna);
 }
 
-bool Piramide::nodosSonIguales(Nodo& Nodo_NO, Nodo& Nodo_NE, Nodo& Nodo_SO, Nodo& Nodo_SE) {
+bool Piramide::nodosSonIguales(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE) {
     std::array<double, 4> parametros[7] = {
-        {Nodo_NO.capacidad_campo_media, Nodo_NE.capacidad_campo_media, Nodo_SO.capacidad_campo_media, Nodo_SE.capacidad_campo_media},
-        {Nodo_NO.pendiente_3clases, Nodo_NE.pendiente_3clases, Nodo_SO.pendiente_3clases, Nodo_SE.pendiente_3clases},
-        {Nodo_NO.porosidad_media, Nodo_NE.porosidad_media, Nodo_SO.porosidad_media, Nodo_SE.porosidad_media},
-        {Nodo_NO.punto_marchitez_medio, Nodo_NE.punto_marchitez_medio, Nodo_SO.punto_marchitez_medio, Nodo_SE.punto_marchitez_medio},
-        {Nodo_NO.umbral_humedo, Nodo_NE.umbral_humedo, Nodo_SO.umbral_humedo, Nodo_SE.umbral_humedo},
-        {Nodo_NO.umbral_intermedio, Nodo_NE.umbral_intermedio, Nodo_SO.umbral_intermedio, Nodo_SE.umbral_intermedio},
-        {Nodo_NO.umbral_seco, Nodo_NE.umbral_seco, Nodo_SO.umbral_seco, Nodo_SE.umbral_seco}
+        {Base_NO.capacidad_campo_media, Base_NE.capacidad_campo_media, Base_SO.capacidad_campo_media, Base_SE.capacidad_campo_media},
+        {Base_NO.pendiente_3clases, Base_NE.pendiente_3clases, Base_SO.pendiente_3clases, Base_SE.pendiente_3clases},
+        {Base_NO.porosidad_media, Base_NE.porosidad_media, Base_SO.porosidad_media, Base_SE.porosidad_media},
+        {Base_NO.punto_marchitez_medio, Base_NE.punto_marchitez_medio, Base_SO.punto_marchitez_medio, Base_SE.punto_marchitez_medio},
+        {Base_NO.umbral_humedo, Base_NE.umbral_humedo, Base_SO.umbral_humedo, Base_SE.umbral_humedo},
+        {Base_NO.umbral_intermedio, Base_NE.umbral_intermedio, Base_SO.umbral_intermedio, Base_SE.umbral_intermedio},
+        {Base_NO.umbral_seco, Base_NE.umbral_seco, Base_SO.umbral_seco, Base_SE.umbral_seco}
     };
     
     for (const auto& parametro : parametros) {
@@ -347,8 +352,8 @@ bool Piramide::nodosSonIguales(Nodo& Nodo_NO, Nodo& Nodo_NE, Nodo& Nodo_SO, Nodo
     return true;
 }
 
-bool Piramide::nodosSonHomogeneos(Nodo& Nodo_NO, Nodo& Nodo_NE, Nodo& Nodo_SO, Nodo& Nodo_SE) {
-    if (Nodo_NO.homog == 1 && Nodo_NE.homog == 1 && Nodo_SO.homog == 1 && Nodo_SE.homog == 1) {
+bool Piramide::nodosSonHomogeneos(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE) {
+    if (Base_NO.homog == 1 && Base_NE.homog == 1 && Base_SO.homog == 1 && Base_SE.homog == 1) {
         return true;
     }
     else {
