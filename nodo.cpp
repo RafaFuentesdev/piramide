@@ -12,6 +12,7 @@ Nodo::Nodo(int id) : id(id) {
     umbral_seco = -1;
     homog = -1;
     area = -1;
+    padre = nullptr;
 }
 
 // Constructor con parámetros
@@ -35,6 +36,7 @@ Nodo::Nodo(){
     umbral_seco = -1;
     homog = -1;
     area = -1;
+    padre = nullptr;
 }
 
 // Indica si el Nodo es homogéneo

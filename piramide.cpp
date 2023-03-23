@@ -187,41 +187,55 @@ void Piramide::inicializarNivelesRestantes(){
     }
 }
 
-void Piramide::purga(){
-
-    std::cout << "Purgar nodos no homogeneos..............." << std::endl;
-
+/**
+ * @brief Elimina nodos no homogéneos de la pirámide y actualiza las relaciones entre nodos y sus padres.
+ * 
+ * Esta función purga la pirámide eliminando nodos no homogéneos y actualizando las relaciones de los nodos restantes con sus padres.
+ * Primero, recorre la pirámide desde el nivel más alto hasta el más bajo y elimina los nodos no homogéneos.
+ * Luego, recorre la pirámide de nuevo desde el nivel más alto hasta el más bajo, actualizando las relaciones entre nodos y sus padres.
+ * 
+ */
+void Piramide::purga() {
+    // Eliminar nodos no homogéneos
     for (int n = num_niv - 1; n >= 0; n--) {
         int tam_fila, tam_columna;
         std::tie(tam_fila, tam_columna) = getTam(n);
+
         for (int i = 0; i < tam_fila; i++) {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][i][j];
-                if(!Nodoi.esHomogenea()){
+
+                // Si el nodo no es homogéneo, eliminarlo
+                if (!Nodoi.esHomogenea()) {
                     Nodoi = Nodo();
                 }
             }
         }
-        std::cout << n << std::endl;
     }
-    
+
+    // Actualizar relaciones entre nodos y sus padres
     for (int n = num_niv - 1; n >= 0; n--) {
         int tam_fila, tam_columna;
         std::tie(tam_fila, tam_columna) = getTam(n);
+
         for (int i = 0; i < tam_fila; i++) {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][i][j];
-                if (Nodoi.area != -1 && Nodoi.padre != nullptr) {
-                    Nodo* padre = piramide[n][i][j].padre;
-                    if (padre->padre == nullptr) {
+
+                // Si el nodo tiene área y no es huérfano, actualizar la relación con su padre
+                if (Nodoi.area != -1 && !Nodoi.esHuerfano()) {
+                    Nodo &padre = Nodoi.getPadre();
+
+                    // Si el padre del nodo es huérfano, eliminar la relación entre el nodo y su padre
+                    if (padre.esHuerfano()) {
                         Nodoi.parricida();
                     }
                 }
             }
         }
-        std::cout << n << std::endl;
     }
 }
+
 
 void Piramide::enlaza() {    	    
     int nivel, fila, col;

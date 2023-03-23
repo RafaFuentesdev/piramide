@@ -24,7 +24,7 @@ public:
     // Constructor de la clase
     Piramide() {
         init();
-        //purga();
+        purga();
         //enlaza();
         //clasifica();
     }
