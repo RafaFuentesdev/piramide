@@ -285,82 +285,121 @@ void Piramide::enlaza() {
 }
 
 void Piramide::clasifica() {
-        int nivel, fila, col;
-        int tam_niv;
-        bool esFusionado;
-        int area_min_paic;
-        int m, n;
-        std::cout << "Crear regiones.................................................";
-                
-        for (int n = num_niv; n >= 0; n--) {
-            int tam_fila, tam_columna;
-            std::tie(tam_fila, tam_columna) = getTam(n);
-            for (int i = 0; i < tam_fila; i++) {
-                for (int j = 0; j < tam_columna; j++) {
-                    Nodo& Nodoi = piramide[n][j][i];
-                    if (Nodoi.area != -1) {
-                        if (Nodoi.esHuerfano()){
-                        	esFusionado = false;
-                            if (Nodoi.esFusionable(area_min_paic)) {                                
-                            	//esFusionado=fusionarConPrimerCandidato(nodo);
-                            	esFusionado=fusionarConMejorCandidato(Nodoi);
-                            }
-
-                            if ((!esFusionado) && Nodoi.area != -1) {
-                            	//excluirDeClase(nodo);
-                                crearClase(Nodoi);
-
-                                /*...........................................
-                                printf("No se enlaza porque : \n");
-                                if (!Piram[nivel][fila][col].esHomogenea()){
-                                printf("\t- No es homogeneo\n");
-                                }
-                                if (Piram[nivel][fila][col].isObstacle()){
-                                printf("\t- Es un obstaculo\n");
-                                }
-                                if (Piram[nivel][fila][col].area <= area_min_paic){
-                                printf("\t- Su area (%d) es menor que el minimo (%d)\n",Piram[nivel][fila][col].area ,area_min_paic);
-                                }			  			  		                
-                                //...........................................
-                                 */
-                            }                         
-                        } else {  
-                        	//excluirDeClase(nodo);
-                            incluirEnClase(Nodoi, Nodoi.getPadre());
+    int nivel, fila, col;
+    int tam_niv;
+    bool esFusionado;
+    int area_min_paic;
+    int m, n;
+    std::cout << "Crear regiones.................................................";
+            
+    for (int n = num_niv; n >= 0; n--) {
+        int tam_fila, tam_columna;
+        std::tie(tam_fila, tam_columna) = getTam(n);
+        for (int i = 0; i < tam_fila; i++) {
+            for (int j = 0; j < tam_columna; j++) {
+                Nodo& Nodoi = piramide[n][j][i];
+                if (Nodoi.area != -1) {
+                    if (Nodoi.esHuerfano()){
+                        esFusionado = false;
+                        if (Nodoi.esFusionable(area_min_paic)) {                                
+                            //esFusionado=fusionarConPrimerCandidato(nodo);
+                            esFusionado=fusionarConMejorCandidato(Nodoi);
                         }
+
+                        if ((!esFusionado) && Nodoi.area != -1) {
+                            //excluirDeClase(nodo);
+                            crearClase(Nodoi);
+
+                            /*...........................................
+                            printf("No se enlaza porque : \n");
+                            if (!Piram[nivel][fila][col].esHomogenea()){
+                            printf("\t- No es homogeneo\n");
+                            }
+                            if (Piram[nivel][fila][col].isObstacle()){
+                            printf("\t- Es un obstaculo\n");
+                            }
+                            if (Piram[nivel][fila][col].area <= area_min_paic){
+                            printf("\t- Su area (%d) es menor que el minimo (%d)\n",Piram[nivel][fila][col].area ,area_min_paic);
+                            }			  			  		                
+                            //...........................................
+                                */
+                        }                         
+                    } else {  
+                        //excluirDeClase(nodo);
+                        incluirEnClase(Nodoi, Nodoi.getPadre());
                     }
                 }
             }
-        }        
-        std::cout << "Clasificación............." << std::endl;
-    }
+        }
+    }        
+    std::cout << "Clasificación............." << std::endl;
+}
 
+/**
+ * @brief Obtiene el nivel, fila y columna de un nodo en la pirámide dado su ID.
+ * 
+ * @param id El ID del nodo.
+ * @return Un tuple con el nivel, fila y columna del nodo.
+ * 
+ * Esta función calcula el nivel, fila y columna de un nodo en la pirámide
+ * a partir de su ID. La pirámide se compone de varios niveles, donde cada
+ * nivel tiene un número específico de filas y columnas.
+ * La función calcula la posición del nodo en la pirámide iterativamente,
+ * sumando el tamaño de los niveles hasta que se alcanza el nivel correcto.
+ * Luego, calcula las coordenadas de fila y columna del nodo en dicho nivel.
+ */
 std::tuple<int, int, int> Piramide::get_nivel_fila_columna(int id) {
     int nivel = 0;
     int tam_nivel = FILAS * COLUMNAS;
     int tam_acumulado = FILAS * COLUMNAS;
+
+    // Buscar el nivel correspondiente al ID
     while (id >= tam_acumulado) {
-        std::cout << "id: " << id << std::endl;
-        std::cout << "tam_nivel: " << tam_nivel << std::endl;
-        std::cout << "num_nivel: " << nivel << std::endl;
         nivel++;
         tam_nivel = tam_nivel / 4;
         tam_acumulado += tam_nivel;
     }
-    int tam_fila = FILAS / pow(2, nivel);
-    int tam_columna = COLUMNAS / pow(2, nivel);
+
+    // Calcular el tamaño de fila y columna en el nivel encontrado
+    int tam_fila, tam_columna;
+    std::tie(tam_fila, tam_columna) = getTam(nivel);
+
+    // Calcular las coordenadas de fila y columna dentro del nivel
     int resto = id % tam_nivel;
     int fila = resto / tam_columna;
     int columna = resto % tam_columna;
+
     return std::make_tuple(nivel, fila, columna);
 }
 
+
+/**
+ * @brief Obtiene el tamaño de un nivel específico de la pirámide en términos de filas y columnas.
+ * 
+ * @param nivel El nivel de la pirámide.
+ * @return Un tuple con el tamaño de filas y columnas del nivel.
+ * 
+ * Esta función calcula el tamaño de un nivel específico de la pirámide en términos de filas y columnas.
+ * El tamaño se reduce a la mitad en cada nivel sucesivo de la pirámide.
+ */
 std::tuple<int, int> Piramide::getTam(int nivel) const {
     int tam_fila = num_filas / std::pow(2, nivel);
     int tam_columna = num_columnas / std::pow(2, nivel);
     return std::make_tuple(tam_fila, tam_columna);
 }
 
+/**
+ * @brief Verifica si los cuatro nodos base son iguales en base a sus atributos.
+ * 
+ * @param Base_NO Nodo base noroeste.
+ * @param Base_NE Nodo base noreste.
+ * @param Base_SO Nodo base suroeste.
+ * @param Base_SE Nodo base sureste.
+ * @return Verdadero si los nodos base son iguales, falso en caso contrario.
+ * 
+ * Esta función compara los atributos de los cuatro nodos base para determinar si son iguales.
+ * Los nodos se consideran iguales si todos sus atributos correspondientes son iguales.
+ */
 bool Piramide::nodosSonIguales(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE) {
     std::array<double, 4> parametros[7] = {
         {Base_NO.capacidad_campo_media, Base_NE.capacidad_campo_media, Base_SO.capacidad_campo_media, Base_SE.capacidad_campo_media},
@@ -372,6 +411,7 @@ bool Piramide::nodosSonIguales(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo
         {Base_NO.umbral_seco, Base_NE.umbral_seco, Base_SO.umbral_seco, Base_SE.umbral_seco}
     };
     
+    // Verificar si todos los atributos correspondientes son iguales entre los nodos
     for (const auto& parametro : parametros) {
         if (!std::equal(parametro.begin() + 1, parametro.end(), parametro.begin())) {
             return false;
@@ -381,6 +421,19 @@ bool Piramide::nodosSonIguales(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo
     return true;
 }
 
+/**
+ * @brief Verifica si los cuatro nodos base son homogéneos.
+ * 
+ * @param Base_NO Nodo base noroeste.
+ * @param Base_NE Nodo base noreste.
+ * @param Base_SO Nodo base suroeste.
+ * @param Base_SE Nodo base sureste.
+ * @return Verdadero si los nodos base son homogéneos, falso en caso contrario.
+ * 
+ * Esta función verifica si los cuatro nodos base son homogéneos, es decir, si todos tienen
+ * un atributo 'homog' igual a 1. Si todos los nodos tienen un atributo 'homog' igual a 1,
+ * la función devuelve verdadero. En caso contrario, devuelve falso.
+ */
 bool Piramide::nodosSonHomogeneos(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, Nodo& Base_SE) {
     if (Base_NO.homog == 1 && Base_NE.homog == 1 && Base_SO.homog == 1 && Base_SE.homog == 1) {
         return true;
@@ -389,6 +442,7 @@ bool Piramide::nodosSonHomogeneos(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, N
         return false;
     }
 }
+
 
 bool Piramide::enlazarConMejorCandidato(Nodo& nodo_enlazable){
     //falta por implementar
