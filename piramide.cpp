@@ -159,6 +159,7 @@ void Piramide::inicializarNivelesRestantes(){
                 Nodo& Base_SO = piramide[n-1][i*2+1][j*2];
                 Nodo& Base_SE = piramide[n-1][i*2+1][j*2+1];
                 
+                //Caso 1: Nodos de la base son iguales y homogéneos.
                 if(nodosSonIguales(Base_NO, Base_NE, Base_SO, Base_SE) && nodosSonHomogeneos(Base_NO, Base_NE, Base_SO, Base_SE)){
                     Nodoi.homog = 1;
                     Nodoi.area = Base_NO.area + Base_NE.area + Base_SO.area + Base_SE.area;
@@ -174,11 +175,14 @@ void Piramide::inicializarNivelesRestantes(){
                     Base_SO.setPadre(Nodoi);
                     Base_SE.setPadre(Nodoi);
                 }
+                //Caso 2: Nodos de la base son suficientemente parecidos (umbral de similitud) y homogéneos.
                 /*
                 else if (nodosSonParecidos(Base_NO, Base_NE, Base_SO, Base_SE, similitud) && nodosSonHomogeneos(Base_NO, Base_NE, Base_SO, Base_SE)){
-                    //Falta por implementar.
+
                 }
                 */
+
+                //Caso 3: Los nodos de la base son diferentes.   
                 else{
                     Nodoi.homog = 0;
                 }
@@ -205,7 +209,7 @@ void Piramide::purga() {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][i][j];
 
-                // Si el nodo no es homogéneo, eliminarlo
+                // Si el nodo no es homogéneo, inicializarlo vacío.
                 if (!Nodoi.esHomogenea()) {
                     Nodoi = Nodo();
                 }
@@ -252,16 +256,14 @@ void Piramide::enlaza() {
             for (int i = 0; i < tam_fila; i++) {
                 for (int j = 0; j < tam_columna; j++) {
                     Nodo& Nodoi = piramide[n][i][j];
-                    // es huerfana y homogenea?
                     if ((Nodoi.area != -1)) {
                         if (nodo_enlazable.esEnlazable()) {
-                            // enlazarConPrimerCandidato(nodo_enlazable);
                             hayCambios=enlazarConMejorCandidato(nodo_enlazable);
-                        } // if es enlazable
-                    } // if existe
-                } // * for (col = 0
-            } // * for (fila=0; fila<tam_niv; fila++)
-        } // * for (nivel=tamano-1; nivel>=0; nivel--)
+                        }
+                    }
+                }
+            }
+        }
     } while (hayCambios);
     
     // showPiramid("Enlaza");
