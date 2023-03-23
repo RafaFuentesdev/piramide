@@ -130,7 +130,6 @@ void Piramide::leerArchivoCSV() {
         Nodoi.homog = 1;
         Nodoi.area = 1;
     }
-    std::cout << "Se han terminado de leer los datos del fichero." << std::endl;
 }
 
 /**
@@ -256,8 +255,6 @@ void Piramide::enlaza() {
     bool hayCambios = false;
     Nodo nodo_enlazable;
 
-    std::cout << "Enlazando nodos......................";
-
     do {
         hayCambios = false;
 
@@ -284,55 +281,51 @@ void Piramide::enlaza() {
     } while (hayCambios);
 }
 
+/**
+ * @brief Clasifica los nodos de la Pirámide para generar regiones.
+ */
 void Piramide::clasifica() {
     int nivel, fila, col;
     int tam_niv;
     bool esFusionado;
     int area_min_paic;
     int m, n;
-    std::cout << "Crear regiones.................................................";
             
+    // Recorre los niveles de la Pirámide de forma descendente
     for (int n = num_niv; n >= 0; n--) {
         int tam_fila, tam_columna;
         std::tie(tam_fila, tam_columna) = getTam(n);
+        
+        // Recorre las filas y columnas de cada nivel
         for (int i = 0; i < tam_fila; i++) {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][j][i];
+                
+                // Si el área del Nodo no es -1 (nodo válido)
                 if (Nodoi.area != -1) {
+                    // Si el Nodo es huérfano (no tiene padre)
                     if (Nodoi.esHuerfano()){
                         esFusionado = false;
-                        if (Nodoi.esFusionable(area_min_paic)) {                                
-                            //esFusionado=fusionarConPrimerCandidato(nodo);
-                            esFusionado=fusionarConMejorCandidato(Nodoi);
+                        
+                        // Verifica si el Nodo es fusionable
+                        if (Nodoi.esFusionable(area_min_paic)) {
+                            // Intenta fusionar el Nodo con el mejor candidato
+                            esFusionado = fusionarConMejorCandidato(Nodoi);
                         }
 
+                        // Si el Nodo no pudo ser fusionado y sigue siendo válido
                         if ((!esFusionado) && Nodoi.area != -1) {
-                            //excluirDeClase(nodo);
+                            // Crea una nueva clase para el Nodo
                             crearClase(Nodoi);
-
-                            /*...........................................
-                            printf("No se enlaza porque : \n");
-                            if (!Piram[nivel][fila][col].esHomogenea()){
-                            printf("\t- No es homogeneo\n");
-                            }
-                            if (Piram[nivel][fila][col].isObstacle()){
-                            printf("\t- Es un obstaculo\n");
-                            }
-                            if (Piram[nivel][fila][col].area <= area_min_paic){
-                            printf("\t- Su area (%d) es menor que el minimo (%d)\n",Piram[nivel][fila][col].area ,area_min_paic);
-                            }			  			  		                
-                            //...........................................
-                                */
                         }                         
                     } else {  
-                        //excluirDeClase(nodo);
+                        // Si el Nodo no es huérfano, lo incluye en la clase de su Nodo padre
                         incluirEnClase(Nodoi, Nodoi.getPadre());
                     }
                 }
             }
         }
     }        
-    std::cout << "Clasificación............." << std::endl;
 }
 
 /**
