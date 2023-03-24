@@ -26,10 +26,15 @@ public:
 
     // Constructor de la clase
     Piramide() {
+        std::cout << std::endl << "Iniciando init()..." << std::endl;
         init();
+        std::cout << std::endl << "Iniciando purga()..." << std::endl;
         purga();
+        std::cout << std::endl << "Iniciando enlaza()..." << std::endl;
         enlaza();
+        std::cout << std::endl << "Iniciando clasifica()..." << std::endl;
         clasifica();
+        std::cout << std::endl << "FIN" << std::endl;
     }
 
     // Métodos para la construcción de la Pirámide

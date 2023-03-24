@@ -75,6 +75,27 @@ bool Nodo::esFusionable(int area_min){
 }
 
 
+/**
+ * @brief Reinicia los atributos del objeto Nodo a sus valores predeterminados.
+ * 
+ * La función reset() establece todos los atributos del objeto Nodo a sus valores 
+ * predeterminados.
+ */
+void Nodo::reset() {
+    id = -1;
+    capacidad_campo_media = -1;
+    estaciones = -1;
+    pendiente_3clases = -1;
+    porosidad_media = -1;
+    punto_marchitez_medio = -1;
+    umbral_humedo = -1;
+    umbral_intermedio = -1;
+    umbral_seco = -1;
+    homog = -1;
+    area = -1;
+    padre = nullptr;
+}
+
 
 
 

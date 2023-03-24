@@ -47,6 +47,9 @@ public:
 
     // Método para verificar si el nodo es fusionable
     bool esFusionable(int area_min);
+
+    // Reinicia los valores de las variables miembro del nodo a sus valores predeterminados
+    void reset();
 };
 
 #endif // NODO_H

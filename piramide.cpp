@@ -1,13 +1,13 @@
 #include "piramide.h"
 
 void Piramide::init(){
-    std::cout << "Incializando datos de la piramide..." << std::endl;
+    std::cout << "\tIncializando datos de la piramide..." << std::endl;
     inicializarPiramide();
-    std::cout << "Leyendo datos del archivo CSV..." << std::endl;
+    std::cout << "\tLeyendo datos del archivo CSV..." << std::endl;
     leerArchivoCSV();
-    std::cout << "Inicializando niveles restantes..." << std::endl;
+    std::cout << "\tInicializando niveles restantes..." << std::endl;
     inicializarNivelesRestantes();
-    std::cout << "Base creada." << std::endl;    
+    std::cout << "\tBase creada." << std::endl;    
 }
 
 /**
@@ -26,9 +26,11 @@ void Piramide::inicializarPiramide(){
     num_columnas = COLUMNAS;
 
     // Calcular el número de niveles a partir de las dimensiones de la base de la pirámide
+    std::cout << "\t\tCalculando numero de niveles de la piramide..." << std::endl;
     num_niv = static_cast<int>(floor(log2(std::max(num_filas, num_columnas))) + 1);
 
     // Reservar memoria para el número de niveles en la pirámide
+    std::cout << "\t\tReservando memoria para la piramide..." << std::endl;
     piramide.reserve(num_niv);
     
     int id_nodo = 0;
@@ -58,6 +60,7 @@ void Piramide::inicializarPiramide(){
         // Añadir el nivel inicializado a la estructura de la pirámide
         piramide.push_back(std::move(level));
     }
+    std::cout << "\t\tPiramide inicializada..." << std::endl;
 }
 
 
@@ -80,8 +83,9 @@ void Piramide::leerArchivoCSV() {
     std::string line;
 
     // Leer encabezado
+    std::cout << "\t\tLeyendo encabezado del archivo..." << std::endl;
     std::getline(file, line);
-
+    std::cout << "\t\tLeyendo cada linea del archivo..." << std::endl;
     // Leer y procesar cada línea del archivo CSV
     while (std::getline(file, line)) {
         std::stringstream ss(line);
@@ -130,6 +134,7 @@ void Piramide::leerArchivoCSV() {
         Nodoi.homog = 1;
         Nodoi.area = 1;
     }
+    std::cout << "\t\tArchivo CSV leido y asignado a la base..." << std::endl;
 }
 
 /**
@@ -144,11 +149,11 @@ void Piramide::leerArchivoCSV() {
  */
 void Piramide::inicializarNivelesRestantes(){
     // Recorrer todos los niveles restantes
+    std::cout << "\t\tInicializando el resto de niveles..." << std::endl;
     for (int n = 1; n < num_niv; n++) {
         int tam_fila, tam_columna;
         // Obtener el tamaño del nivel actual
         std::tie(tam_fila, tam_columna) = getTam(n);
-
         // Recorrer todas las filas y columnas del nivel actual
         for (int i = 0; i < tam_fila; i++) {
             for (int j = 0; j < tam_columna; j++) {
@@ -181,13 +186,14 @@ void Piramide::inicializarNivelesRestantes(){
                 }
                 */
 
-                //Caso 3: Los nodos de la base son diferentes.   
+                //Caso 3: Los nodos de la base son diferentes o no homogéneos.   
                 else{
                     Nodoi.homog = 0;
                 }
             }
         }
     }
+    std::cout << "\t\tTerminado de inicializar los demás niveles..." << std::endl;
 }
 
 /**
@@ -200,6 +206,7 @@ void Piramide::inicializarNivelesRestantes(){
  */
 void Piramide::purga() {
     // Eliminar nodos no homogéneos
+    std::cout << "\t\tEliminando nodos no homogéneos..." << std::endl;
     for (int n = num_niv - 1; n >= 0; n--) {
         int tam_fila, tam_columna;
         std::tie(tam_fila, tam_columna) = getTam(n);
@@ -210,13 +217,14 @@ void Piramide::purga() {
 
                 // Si el nodo no es homogéneo, inicializarlo vacío.
                 if (!Nodoi.esHomogeneo()) {
-                    Nodoi = Nodo();
+                    Nodoi.reset();
                 }
             }
         }
     }
 
     // Actualizar relaciones entre nodos y sus padres
+    std::cout << "\t\tActualizando relaciones entre nodos y sus padres..." << std::endl;
     for (int n = num_niv - 1; n >= 0; n--) {
         int tam_fila, tam_columna;
         std::tie(tam_fila, tam_columna) = getTam(n);
@@ -225,8 +233,8 @@ void Piramide::purga() {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][i][j];
 
-                // Si el nodo tiene área y no es huérfano, actualizar la relación con su padre
-                if (Nodoi.area != -1 && !Nodoi.esHuerfano()) {
+                // Si el nodo es válido y no es huérfano, actualizar la relación con su padre
+                if (Nodoi.id != -1 && !Nodoi.esHuerfano()) {
                     Nodo &padre = Nodoi.getPadre();
 
                     // Si el padre del nodo es huérfano, eliminar la relación entre el nodo y su padre
@@ -266,10 +274,10 @@ void Piramide::enlaza() {
             // Recorrer filas y columnas del nivel actual
             for (int i = 0; i < tam_fila; i++) {
                 for (int j = 0; j < tam_columna; j++) {
-                    Nodo& Nodoi = piramide[n][i][j];
 
-                    // Si el nodo tiene área, verificar si es enlazable
-                    if (Nodoi.area != -1) {
+                    Nodo& Nodoi = piramide[n][i][j];
+                    // Si el nodo es válido, verificar si es enlazable
+                    if (Nodoi.id != -1) {
                         if (nodo_enlazable.esEnlazable()) {
                             // Intentar enlazar con el mejor candidato y actualizar hayCambios
                             hayCambios = enlazarConMejorCandidato(nodo_enlazable);
@@ -278,6 +286,7 @@ void Piramide::enlaza() {
                 }
             }
         }
+        hayCambios = false;
     } while (hayCambios);
 }
 
@@ -301,8 +310,8 @@ void Piramide::clasifica() {
             for (int j = 0; j < tam_columna; j++) {
                 Nodo& Nodoi = piramide[n][j][i];
                 
-                // Si el área del Nodo no es -1 (nodo válido)
-                if (Nodoi.area != -1) {
+                // Si el Nodo es válido
+                if (Nodoi.id != -1) {
                     // Si el Nodo es huérfano (no tiene padre)
                     if (Nodoi.esHuerfano()){
                         esFusionado = false;
@@ -314,7 +323,7 @@ void Piramide::clasifica() {
                         }
 
                         // Si el Nodo no pudo ser fusionado y sigue siendo válido
-                        if ((!esFusionado) && Nodoi.area != -1) {
+                        if ((!esFusionado) && Nodoi.id != -1) {
                             // Crea una nueva clase para el Nodo
                             crearClase(Nodoi);
                         }                         
@@ -439,12 +448,12 @@ bool Piramide::nodosSonHomogeneos(Nodo& Base_NO, Nodo& Base_NE, Nodo& Base_SO, N
 
 bool Piramide::enlazarConMejorCandidato(Nodo& nodo_enlazable){
     //falta por implementar
-    return true;
+    return false;
 }
 
 bool Piramide::fusionarConMejorCandidato(Nodo& nodo){
     //falta por implementar
-    return true;
+    return false;
 }
 
 void Piramide::crearClase(Nodo& nodo){
