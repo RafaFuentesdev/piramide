@@ -15,6 +15,7 @@ public:
     // Variables miembro que almacenan información relevante del nodo
     int id, nivel, fila, columna;
     Nodo* padre;
+    //añadir la lista de  hijos.
     int homog;
     int area;
     double capacidad_campo_media;

@@ -286,7 +286,6 @@ void Piramide::enlaza() {
                 }
             }
         }
-        hayCambios = false;
     } while (hayCambios);
 }
 
